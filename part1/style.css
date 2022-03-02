@@ -1,0 +1,7 @@
+.container, .register form, .login form{
+    display:flex;
+}
+
+.register form, .login form {
+    flex-direction: column;
+}
