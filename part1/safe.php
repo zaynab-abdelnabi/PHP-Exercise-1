@@ -7,6 +7,12 @@ $password = "";
 $dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
 $pdo = new PDO($dsn, $user, $password);
 
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+if(!$pdo){
+    echo "connection failed";
+}
+
 ?>
 
 
@@ -33,7 +39,7 @@ $pdo = new PDO($dsn, $user, $password);
     $socialSecNum = "";
 
 
-    if (isset($_GET["submit"])) {
+    if (isset($_GET["login"])) {
         $username = $_GET["username"];
         $password = $_GET["pass"];
 
@@ -41,6 +47,12 @@ $pdo = new PDO($dsn, $user, $password);
 
         $stmt = $pdo->query($sql);
         $user = $stmt->fetch();
+
+        // if ($user > 0) {
+        //     echo 'data found';
+        // } else {
+        //     echo 'no user found';
+        // }
 
         echo "This is All the user information <br>";
         echo "Full Name: " . $user['fullname'] . "<br>";
@@ -52,35 +64,36 @@ $pdo = new PDO($dsn, $user, $password);
         echo "Social Secure Number: " . $user["socialSecNum"] . "<br>";
     }
 
-    if (isset($_POST["submit"])) {
+    if (isset($_POST["register"])) {
 
         if ($_POST["pass"] == $_POST["confirmpass"]) {
+
             $fullname = $_POST["fullname"];
             $username = $_POST["username"];
             $password = $_POST["pass"];
             $email = $_POST["email"];
             $phone = $_POST["phone"];
-            $birthDate = $_POST["birthdate"];
+            $birthDate = $_POST["birthDate"];
             $socialSecNum = $_POST["socialSecNum"];
 
-            $sql = "INSERT INTO `Users` (`fullname`, `username`, `password`, `email`, `phone`, `birthDate`, `socialSecNum`) VALUES (':fullname', ':username', ':password', ':email', ':birthDate', ':socialSecNum')";
 
+            $sql = "INSERT INTO Users(`fullname`, `username`, `password`, `email`, `phone`, `birthDate`, `socialSecNum`) VALUES(?,?,?,?,?,?,?)";
             $statement = $pdo->prepare($sql);
-
+            
             $statement->execute([
-                ':fullname' => $fullname,
-                ':username' => $username,
-                ':password' => $password,
-                ':email' => $email,
-                ':birthDate' => $birthDate,
-                ':phone' => $phone,
-                ':socialSecNum' => $socialSecNum,
+                $fullname,
+                $username,
+                $password,
+                $email,
+                $phone,
+                $birthDate,
+                $socialSecNum
             ]);
-
-            $publisher_id = $pdo->lastInsertId();
-
-            echo 'The publisher id ' . $publisher_id . ' was inserted';
         }
+        else {
+            echo "the password didn't match the confirmed password";
+        }
+
     }
 
     ?>

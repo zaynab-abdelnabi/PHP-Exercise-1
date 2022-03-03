@@ -5,3 +5,8 @@
 .register form, .login form {
     flex-direction: column;
 }
+
+.register, .login {
+    width: 50%;
+    padding: 2rem;
+}
